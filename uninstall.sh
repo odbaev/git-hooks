@@ -29,7 +29,10 @@ then
 fi
 
 # git commit template
-git_commit_template="$git_dir/commit-template.txt"
+git_commit_template="$(git config commit.template)"
+
+# git hooks commit template
+gh_commit_template="$git_dir/gh-commit-template.txt"
 
 for file in "$git_hooks_dir"/*
 do
@@ -64,9 +67,9 @@ do
     fi
 
     # remove commit template
-    if [ "$hook_name" = "post-checkout" ]
+    if [ "$hook_name" = "post-checkout" ] && [ "$git_commit_template" = "$gh_commit_template" ]
     then
-        rm "$git_commit_template"
+        git config --unset commit.template
     fi
 
     echo 'Git hook removed.'

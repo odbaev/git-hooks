@@ -1,3 +1,0 @@
-@summary
-@{JiraProject-[0-9]+}branch
-@description

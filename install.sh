@@ -37,17 +37,29 @@ then
     exit_command
 fi
 
+# git repository dir
+repo_dir=$(git rev-parse --show-toplevel)
+
+# git hooks user config
+user_config="$install_dir/gh-user.cfg"
+
+cfg_desc='# git hooks user config'
+
+# add user config to gitignore
+if ! git check-ignore -q "$user_config"
+then
+    user_cfg_repo_rel="/$(realpath --relative-to="$repo_dir" "$user_config")"
+    printf "\n$cfg_desc\n$user_cfg_repo_rel\n" >> "$repo_dir/.gitignore"
+fi
+
+# create user config
+if [ ! -f "$user_config" ]
+then
+    printf "$cfg_desc (overrides default config)\n" > "$user_config"
+fi
+
 # shebang interpreter directive
 interpreter='#!/bin/bash'
-
-# git commit template
-git_commit_template="$git_dir/commit-template.txt"
-
-# custom commit template
-commit_template="$install_dir/commit-template.txt"
-
-# default commit message template
-template="@summary\n@{JiraProject-[0-9]+}branch\n@description"
 
 for file in "$hooks_dir"/*
 do
@@ -61,14 +73,6 @@ do
     hook_name="${file_name%%.*}"
 
     echo "Git hook: $hook_name"
-
-    read -rep 'Install it? (y/n) ' -n 1
-
-    if [[ ! $REPLY =~ ^[yY]$ ]]
-    then
-        echo
-        continue
-    fi
 
     git_hook="$git_hooks_dir/$hook_name"
 
@@ -100,14 +104,7 @@ do
     # create commit template
     if [ "$hook_name" = "post-checkout" ]
     then
-        if [ ! -f "$commit_template" ]
-        then
-            printf "$template" > "$commit_template"
-        fi
-
-        git config commit.template "$git_commit_template"
-
-        "$git_hook" >/dev/null
+        "$git_hook" "" "" 1 >/dev/null
 
         if [ $? -ne 0 ]
         then

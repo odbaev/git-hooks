@@ -8,13 +8,16 @@ Development automation using git hooks.
 
 * parameterized git commit template using regex  
 
-By default, adds branch name (without folder) matching Jira Issue to commit description.  
-Template is specified in [commit-template.txt](commit-template.txt) file, change it if necessary.
+By default, adds branch name (without folder) matching Jira Issue to commit description.
 
 ## Installation
 
 * Copy all files from this project to some directory in your git repository.
 * Use [install.sh](install.sh) script to install git hooks.
+
+## Configuration
+
+After installation there will be user config (gh-user.cfg) added to gitignore and overriding default config ([gh-default.cfg](gh-default.cfg)).
 
 ## Uninstallation
 
