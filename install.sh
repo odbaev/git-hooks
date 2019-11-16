@@ -101,18 +101,6 @@ do
         continue
     fi
 
-    # create commit template
-    if [ "$hook_name" = "post-checkout" ]
-    then
-        "$git_hook" "" "" 1 >/dev/null
-
-        if [ $? -ne 0 ]
-        then
-            echo >&2
-            continue
-        fi
-    fi
-
     echo 'Git hook created.'
     echo
 done

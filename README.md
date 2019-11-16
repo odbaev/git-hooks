@@ -26,4 +26,4 @@ Use [uninstall.sh](uninstall.sh) script to uninstall git hooks.
 ## Requirements
 
 * Bash (installed with [Git for Windows](https://git-scm.com/downloads))
-* Git client supporting git hooks and commit message templates (e.g. [GitKraken](https://www.gitkraken.com/download))
+* Git client supporting git hooks (e.g. [GitKraken](https://www.gitkraken.com/download), [Sourcetree](https://www.sourcetreeapp.com))

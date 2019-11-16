@@ -28,12 +28,6 @@ then
     exit_command
 fi
 
-# git commit template
-git_commit_template="$(git config commit.template)"
-
-# git hooks commit template
-gh_commit_template="$git_dir/gh-commit-template.txt"
-
 for file in "$git_hooks_dir"/*
 do
     file_name=$(basename "$file")
@@ -66,14 +60,8 @@ do
         continue
     fi
 
-    # remove commit template
-    if [ "$hook_name" = "post-checkout" ] && [ "$git_commit_template" = "$gh_commit_template" ]
-    then
-        git config --unset commit.template
-    fi
-
     echo 'Git hook removed.'
     echo
 done
 
-read -rep 'Press any key to exit...' -n 1
+exit_command
