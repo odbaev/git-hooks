@@ -53,7 +53,7 @@ case $commit_type in
                 pattern=${BASH_REMATCH[2]}
 
                 # check if template parameter matches pattern
-                if [ $pattern ] && [[ ! $param =~ ^$pattern$ ]]
+                if [[ $pattern && ! $param =~ ^$pattern$ ]]
                 then
                     param=''
                 fi
