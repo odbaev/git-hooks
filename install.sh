@@ -24,7 +24,7 @@ git_hooks_dir="$git_dir/hooks"
 mkdir -p "$git_hooks_dir"
 
 #install directory
-install_dir="$(dirname "$(realpath "$BASH_SOURCE")")"
+install_dir=$(git rev-parse "$(dirname "$(realpath "$BASH_SOURCE")")")
 
 # custom git hooks directory
 hooks_dir="$install_dir/hooks"
