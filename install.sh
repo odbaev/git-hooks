@@ -8,7 +8,7 @@ exit_command () {
 }
 
 # git directory
-git_dir=$(git rev-parse --absolute-git-dir)
+git_dir=$(git rev-parse --git-dir)
 
 # check for git repository existance
 if [ $? -ne 0 ]
