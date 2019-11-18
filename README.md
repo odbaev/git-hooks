@@ -4,11 +4,13 @@ Development automation using git hooks.
 
 ## Hooks
 
-### post-checkout
+### prepare-commit-msg
 
 * parameterized git commit template using regex  
 
 By default, adds branch name (without folder) matching Jira Issue to commit description.
+
+* branch name excluding folder for merge commit message
 
 ## Installation
 

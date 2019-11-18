@@ -67,8 +67,24 @@ case $commit_type in
             # remove trailing whitespace
             template=${template%%+([[:space:]])}
 
-            # update git commit template
+            # update git commit message
             echo -n "$template" > "$commit_msg_file"
+        fi
+        ;;
+
+    'merge')
+        # use branch name excluding folder for merge message
+        if [ "$use_short_branch_name_for_merge" = "true" ] \
+            && git rev-parse -q --verify MERGE_HEAD >/dev/null
+        then
+            cur_branch=$(git name-rev --name-only HEAD)
+            merge_branch=$(git name-rev --name-only MERGE_HEAD)
+
+            merge_msg=${commit_msg/$cur_branch/$(basename $cur_branch)}
+            merge_msg=${merge_msg/$merge_branch/$(basename $merge_branch)}
+
+            # update git merge commit message
+            echo -n "$merge_msg" > "$commit_msg_file"
         fi
         ;;
 esac
