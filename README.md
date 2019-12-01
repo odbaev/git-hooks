@@ -12,6 +12,10 @@ By default, adds branch name (without folder) matching Jira Issue to commit desc
 
 * branch name excluding folder for merge commit message
 
+### pre-commit
+
+* convert files to utf-8 encoding or warn what files are not utf-8 encoded
+
 ## Installation
 
 * Copy all files from this project to some directory in your git repository.
