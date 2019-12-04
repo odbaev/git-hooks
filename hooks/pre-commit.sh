@@ -64,6 +64,25 @@ do
         fi
     fi
 
+    # use spaces instead of tabs
+    if [ "$use_spaces_for_tabs" = "true" ]
+    then
+        if grep -q $'\t' "$file"
+        then
+            if [ "$warn_file_has_tabs" = "false" ]
+            then
+                # convert tabs to spaces
+                expand -t $tab_size "$file" > "$tmp_file"
+                mv -f "$tmp_file" "$file"
+
+                file_changed="true"
+            else
+                echo "$file: has tabs."
+                need_warn="true"
+            fi
+        fi
+    fi
+
     if [ "$file_changed" = "true" ]
     then
         git add "$file"
