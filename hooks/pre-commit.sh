@@ -87,7 +87,7 @@ do
     then
         git add "$file"
     fi
-done <<< $(git diff --cached --name-only --diff-filter=AM)
+done < <(git diff --cached --name-only --diff-filter=AM)
 
 # prevent commit on warning
 if [ "$need_warn" = "true" ]
