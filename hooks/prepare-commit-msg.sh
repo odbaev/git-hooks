@@ -5,7 +5,7 @@ set -euo pipefail
 
 # post-checkout git hook
 
-config_dir="$(dirname "$(dirname "$BASH_SOURCE")")"
+config_dir=${BASH_SOURCE%/*/*}
 
 # load default config
 . "$config_dir/gh-default.cfg"
@@ -16,7 +16,7 @@ config_dir="$(dirname "$(dirname "$BASH_SOURCE")")"
 # commit message file
 commit_msg_file=$1
 
-commit_msg=$(< "$commit_msg_file")
+commit_msg=$(< "$commit_msg_file")$'\n'
 
 # commit type
 commit_type=${2-}
@@ -32,11 +32,13 @@ case $commit_type in
             # template parameters
             declare -A params
 
-            params['summary']=$(head -n 1 <<< "$commit_msg")
-            params['description']=$(tail -n +2 <<< "$commit_msg")
+            params['summary']=${commit_msg%%$'\n'*}
+            params['description']=${commit_msg#*$'\n'}
+
+            branch=$(git rev-parse --abbrev-ref HEAD)
 
             # git branch name excluding folder
-            params['branch']=$(basename $(git rev-parse --abbrev-ref HEAD))
+            params['branch']=${branch##*/}
 
             # internal field separator
             IFS='|'
@@ -77,11 +79,16 @@ case $commit_type in
         if [ "$use_short_branch_name_for_merge" = "true" ] \
             && git rev-parse -q --verify MERGE_HEAD >/dev/null
         then
-            cur_branch=$(git name-rev --name-only HEAD)
-            merge_branch=$(git name-rev --name-only MERGE_HEAD)
+            mapfile -t branch < <(git name-rev --name-only HEAD MERGE_HEAD)
 
-            merge_msg=${commit_msg/$cur_branch/$(basename $cur_branch)}
-            merge_msg=${merge_msg/$merge_branch/$(basename $merge_branch)}
+            cur_branch=${branch[0]}
+            cur_branch_short=${cur_branch##*/}
+
+            merge_branch=${branch[1]}
+            merge_branch_short=${merge_branch##*/}
+
+            merge_msg=${commit_msg/$cur_branch/$cur_branch_short}
+            merge_msg=${merge_msg/$merge_branch/$merge_branch_short}
 
             # update git merge commit message
             echo -n "$merge_msg" > "$commit_msg_file"

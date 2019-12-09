@@ -5,7 +5,7 @@ set -euo pipefail
 
 # pre-commit git hook
 
-config_dir="$(dirname "$(dirname "$BASH_SOURCE")")"
+config_dir=${BASH_SOURCE%/*/*}
 
 # load default config
 . "$config_dir/gh-default.cfg"
@@ -31,8 +31,7 @@ do
 
     file_changed="false"
 
-    file_name=$(basename "$file")
-    tmp_file="$tmp_dir/$file_name"
+    tmp_file="$tmp_dir/${file##*/}"
 
     # use utf-8 encoding
     if [ "$use_utf8_encoding" = "true" ]
@@ -44,13 +43,14 @@ do
             # check for warning when file is not utf-8 encoded
             if [ "$warn_file_not_utf8_encoded" = "false" ]
             then
-                if [ "$file_encoding" = "binary" ]
-                then
-                    file_encoding="utf-16"
-                elif [ "$file_encoding" = "iso-8859-1" ]
-                then
-                    file_encoding="cp1251"
-                fi
+                case $file_encoding in
+                    'binary')
+                        file_encoding='utf-16'
+                        ;;
+                    'iso-8859-1')
+                        file_encoding='cp1251'
+                        ;;
+                esac
 
                 # convert file to utf-8 encoding
                 iconv -f $file_encoding -t utf-8 "$file" > "$tmp_file"
