@@ -21,6 +21,22 @@ commit_msg=$(< "$commit_msg_file")$'\n'
 # commit type
 commit_type=${2-}
 
+# enable extended pattern matching
+shopt -s extglob
+
+# trim whitespace
+trim() {
+    local str=$1
+
+    # remove leading whitespace
+    str=${str##+([[:space:]])}
+
+    # remove trailing whitespace
+    str=${str%%+([[:space:]])}
+
+    echo -n "$str"
+}
+
 case $commit_type in
     'message'|'template'|'')
         # use parameterized git commit template
@@ -32,8 +48,8 @@ case $commit_type in
             # template parameters
             declare -A params
 
-            params['summary']=${commit_msg%%$'\n'*}
-            params['description']=${commit_msg#*$'\n'}
+            params['summary']=$(trim "${commit_msg%%$'\n'*}")
+            params['description']=$(trim "${commit_msg#*$'\n'}")
 
             branch=$(git rev-parse --abbrev-ref HEAD)
 
@@ -44,7 +60,9 @@ case $commit_type in
             IFS='|'
 
             # parameters pattern
-            params_pattern="@({.+})?(${!params[*]})"
+            params_pattern="@(\{[^}]+})?(${!params[*]})"
+
+            unset IFS
 
             # template parameter substitution
             while read -r match
@@ -63,11 +81,7 @@ case $commit_type in
                 template=${template//"$match"/$param}
             done < <(grep -Eo "$params_pattern" <<< "$template" | sort -u)
 
-            # enable extended pattern matching
-            shopt -s extglob
-
-            # remove trailing whitespace
-            template=${template%%+([[:space:]])}
+            template=$(trim "$template")
 
             # update git commit message
             echo -n "$template" > "$commit_msg_file"
