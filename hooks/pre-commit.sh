@@ -7,6 +7,9 @@ set -euo pipefail
 
 config_dir=${BASH_SOURCE%/*/*}
 
+# export variables and functions
+set -a
+
 # load default config
 . "$config_dir/gh-default.cfg"
 
@@ -19,16 +22,15 @@ tmp_dir=$(mktemp -d --suffix=-gh)
 # cleanup on exit
 trap "rm -rf $tmp_dir" EXIT
 
-need_warn="false"
+process_file() {
+    file=$1
 
-# file processing
-while read -r file
-do
     if ! [[ -f $file && $file =~ ^$processed_files$ ]]
     then
-        continue
+        return 0
     fi
 
+    need_warn="false"
     file_changed="false"
 
     tmp_file="$tmp_dir/${file##*/}"
@@ -87,10 +89,15 @@ do
     then
         git add "$file"
     fi
-done < <(git diff --cached --name-only --diff-filter=AM)
 
-# prevent commit on warning
-if [ "$need_warn" = "true" ]
-then
-    exit 1
-fi
+    # prevent commit on warning
+    if [ "$need_warn" = "true" ]
+    then
+        return 1
+    fi
+}
+
+set +a
+
+# file processing
+git diff --cached --name-only --diff-filter=AM | xargs -n 1 -P 0 -I {} bash -c 'process_file "$@"' _ {}
