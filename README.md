@@ -14,8 +14,8 @@ By default, adds branch name (without folder) matching Jira Issue to commit desc
 
 ### pre-commit
 
-* convert files to utf-8 encoding or warn what files are not utf-8 encoded
-* convert tabs to spaces or warn what files has tabs
+* convert files to utf-8 encoding or warn which files are not utf-8 encoded
+* convert tabs to spaces or warn which files have tabs
 
 ## Installation
 
