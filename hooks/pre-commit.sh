@@ -100,4 +100,4 @@ process_file() {
 set +a
 
 # file processing
-git diff --cached --name-only --diff-filter=AM | xargs -n 1 -P 0 -I {} bash -c 'process_file "$@"' _ {}
+git diff --cached --name-only --diff-filter=AM | xargs -n 1 -P 0 -I {} bash -c 'set -euo pipefail; process_file "$@"' _ {}
