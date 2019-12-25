@@ -25,13 +25,7 @@ trap "rm -rf $tmp_dir" EXIT
 process_file() {
     file=$1
 
-    if ! [[ -f $file && $file =~ ^$processed_files$ ]]
-    then
-        return 0
-    fi
-
     need_warn="false"
-    file_changed="false"
 
     tmp_file="$tmp_dir/${file##*/}"
 
@@ -57,8 +51,6 @@ process_file() {
                 # convert file to utf-8 encoding
                 iconv -f $file_encoding -t utf-8 "$file" > "$tmp_file"
                 mv -f "$tmp_file" "$file"
-
-                file_changed="true"
             else
                 echo "$file: not utf-8 encoded."
                 need_warn="true"
@@ -76,18 +68,11 @@ process_file() {
                 # convert tabs to spaces
                 expand -t $tab_size "$file" > "$tmp_file"
                 mv -f "$tmp_file" "$file"
-
-                file_changed="true"
             else
                 echo "$file: has tabs."
                 need_warn="true"
             fi
         fi
-    fi
-
-    if [ "$file_changed" = "true" ]
-    then
-        git add "$file"
     fi
 
     # prevent commit on warning
@@ -99,5 +84,11 @@ process_file() {
 
 set +a
 
+# staged processed files
+staged_files=$(git diff --cached --name-only --diff-filter=AM | grep -E "^$processed_files$")
+
 # file processing
-git diff --cached --name-only --diff-filter=AM | xargs -n 1 -P 0 -I {} bash -c 'set -euo pipefail; process_file "$@"' _ {}
+echo "$staged_files" | xargs -n 1 -P 0 -I {} bash -c 'set -euo pipefail; process_file "$@"' _ {}
+
+# add files to index after processing
+git add $staged_files
