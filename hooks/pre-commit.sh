@@ -85,10 +85,13 @@ process_file() {
 set +a
 
 # staged processed files
-staged_files=$(git diff --cached --name-only --diff-filter=AM | grep -E "^$processed_files$")
+staged_files=$(git diff --cached --name-only --diff-filter=AM | grep -E "^$processed_files$" || true)
 
-# file processing
-echo "$staged_files" | xargs -n 1 -P 0 -I {} bash -c 'set -euo pipefail; process_file "$@"' _ {}
+if [ "$staged_files" ]
+then
+    # file processing
+    echo "$staged_files" | xargs -n 1 -P 0 -I {} bash -c 'set -euo pipefail; process_file "$@"' _ {}
 
-# add files to index after processing
-git add $staged_files
+    # add files to index after processing
+    git add $staged_files
+fi
