@@ -58,6 +58,9 @@ then
     printf "$cfg_desc (overrides default config)\n" > "$user_config"
 fi
 
+# display utf-8 characters in filenames
+git config core.quotepath false
+
 # shebang interpreter directive
 interpreter='#!/bin/bash'
 
