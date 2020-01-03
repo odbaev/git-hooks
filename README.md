@@ -16,6 +16,7 @@ By default, adds branch name (without folder) matching Jira Issue to commit desc
 
 * convert files to utf-8 encoding or warn which files are not utf-8 encoded
 * convert tabs to spaces or warn which files have tabs
+* remove trailing whitespace or warn which files have trailing whitespace
 
 ## Installation
 
