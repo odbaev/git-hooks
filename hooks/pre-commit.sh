@@ -75,6 +75,36 @@ process_file() {
         fi
     fi
 
+    sed_commands=''
+
+    nl='\n'
+
+    # check for CRLF
+    if grep -q -P '\r' "$file"
+    then
+        nl='\r'$nl
+    fi
+
+    # remove trailing whitespace
+    if [ "$remove_trailing_whitespace" = "true" ]
+    then
+        if grep -q -P '\h\r?$' "$file"
+        then
+            if [ "$warn_file_has_trailing_whitespace" = "false" ]
+            then
+                sed_commands+="s/[[:blank:]]+$nl/$nl/g;"
+            else
+                echo "$file: has trailing whitespace."
+                need_warn="true"
+            fi
+        fi
+    fi
+
+    if [ "$sed_commands" ]
+    then
+        sed -i -z -b -E "$sed_commands" "$file"
+    fi
+
     # prevent commit on warning
     if [ "$need_warn" = "true" ]
     then
