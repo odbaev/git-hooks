@@ -17,6 +17,10 @@ By default, adds branch name (without folder) matching Jira Issue to commit desc
 * convert files to utf-8 encoding or warn which files are not utf-8 encoded
 * convert tabs to spaces or warn which files have tabs
 * remove trailing whitespace or warn which files have trailing whitespace
+* format SQL scripts (\*.sql files)
+  - remove header containing date of script generation
+  - align and replace CREATE with ALTER statement for stored procedure, function, view, and trigger
+  - align batch terminator at the end of script
 
 ## Installation
 

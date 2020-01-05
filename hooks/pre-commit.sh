@@ -100,6 +100,22 @@ process_file() {
         fi
     fi
 
+    # format SQL scripts
+    if [ "$format_sql_scripts" = "true" ]
+    then
+        if [[ $file == *.sql ]]
+        then
+            # remove header containing date of script generation
+            sed_commands+="s/\/\*{6} Object:.+Script Date:.+ \*{6}\/$nl//;"
+
+            # align and replace CREATE with ALTER statement for stored procedure, function, view, and trigger
+            sed_commands+="s/\s+(CREATE|ALTER)\s+(PROC|FUNCTION|VIEW|TRIGGER)/$nl${nl}ALTER \2/i;"
+
+            # align batch terminator at the end of script
+            sed_commands+="s/\s+GO\s*$/$nl${nl}GO$nl/i;"
+        fi
+    fi
+
     if [ "$sed_commands" ]
     then
         sed -i -z -b -E "$sed_commands" "$file"
