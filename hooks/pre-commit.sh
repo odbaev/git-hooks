@@ -138,6 +138,11 @@ then
     # file processing
     echo "$staged_files" | xargs -n 1 -P 0 -I {} bash -c 'set -euo pipefail; process_file "$@"' _ {}
 
+    # internal field separator
+    IFS=$'\n'
+
     # add files to index after processing
     git add $staged_files
+
+    unset IFS
 fi
