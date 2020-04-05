@@ -22,6 +22,10 @@ By default, adds branch name (without folder) matching Jira Issue to commit desc
   - align and replace CREATE with ALTER statement for stored procedure, function, view, and trigger
   - align batch terminator at the end of script
 
+### pre-push
+
+* execute SQL stored procedure for modified SQL objects
+
 ## Installation
 
 * Copy all files from this project to some directory in your git repository.
@@ -37,5 +41,6 @@ Use [uninstall.sh](uninstall.sh) script to uninstall git hooks.
 
 ## Requirements
 
-* Bash (installed with [Git for Windows](https://git-scm.com/downloads))
+* Bash 4.2+ (installed with [Git for Windows](https://git-scm.com/downloads))
+* PowerShell 5+ (integrated in Windows 10, [installation](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell))
 * Git client supporting git hooks (e.g. [GitKraken](https://www.gitkraken.com/download), [Sourcetree](https://www.sourcetreeapp.com))
