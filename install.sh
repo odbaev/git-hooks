@@ -58,6 +58,19 @@ then
     printf "$cfg_desc (overrides default config)\n" > "$user_config"
 fi
 
+# git hooks deploy dir
+deploy_dir="$install_dir/deploy"
+
+# add deploy dir to gitignore
+if ! git check-ignore -q "$deploy_dir"
+then
+    deploy_dir_repo_rel="/$(realpath --relative-to="$repo_dir" "$deploy_dir")"
+    printf "\n# git hooks deploy dir\n$deploy_dir_repo_rel\n" >> "$repo_dir/.gitignore"
+fi
+
+# create deploy dir
+mkdir -p "$deploy_dir"
+
 # display utf-8 characters in filenames
 git config core.quotepath false
 

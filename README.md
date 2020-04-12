@@ -24,7 +24,7 @@ By default, adds branch name (without folder) matching Jira Issue to commit desc
 
 ### pre-push
 
-* execute SQL stored procedure for modified SQL objects
+* execute SQL stored procedure for modified SQL objects and make deploy script
 
 ## Installation
 
