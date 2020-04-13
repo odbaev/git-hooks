@@ -43,6 +43,7 @@ then
                 -SqlProcedure "$sql_procedure" \
                 -DeployDir "$deploy_dir" \
                 -DeployScriptNameFormat "$deploy_script_name_format" \
+                -DeployScriptCleanupDays "$deploy_script_cleanup_days" \
                 $(if [ "$make_deploy_script" = "only" ]; then echo -OnlyScriptCommands; fi) \
                 $(if [ "$make_deploy_script" = "false" ]; then echo -NotScriptCommands; fi)
         fi

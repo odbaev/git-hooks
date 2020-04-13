@@ -7,6 +7,7 @@ param
     [String]$SqlProcedure,
     [String]$DeployDir,
     [String]$DeployScriptNameFormat,
+    [Int]$DeployScriptCleanupDays,
     [Switch]$OnlyScriptCommands,
     [Switch]$NotScriptCommands
 )
@@ -46,6 +47,7 @@ try
                 $command.ExecuteNonQuery() | Out-Null
             }
 
+            # make deploy script
             if (!$NotScriptCommands.IsPresent)
             {
                 $deployScript += "exec $($command.CommandText) N'$($param.Value.Replace("'", "''"))'"+ [System.Environment]::NewLine
@@ -53,6 +55,13 @@ try
         }
     }
 
+    # cleanup deploy scripts
+    if ($DeployScriptCleanupDays -gt 0)
+    {
+        Get-ChildItem -Path "$DeployDir" -Recurse -File | Where-Object LastWriteTime -lt (Get-Date).AddDays(-$DeployScriptCleanupDays) | Remove-Item
+    }
+
+    # save deploy script
     if ($null -ne $deployScript)
     {
         $deployScriptName = "$DeployScriptNameFormat.sql" -f (Get-Date)
